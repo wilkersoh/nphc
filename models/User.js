@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const EmployeeSchema = new mongoose.Schema({
-  employeeId: {
+const UserSchema = new mongoose.Schema({
+  userId: {
     type: String,
     unique: true
   },
@@ -21,4 +21,4 @@ const EmployeeSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.models.Employee || mongoose.model('Employee', EmployeeSchema);
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema);
