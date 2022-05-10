@@ -1,8 +1,28 @@
-import '../styles/globals.css'
+import React from "react"
 import type { AppProps } from 'next/app'
+import { QueryClientProvider, QueryClient, Hydrate } from "react-query"
+import { ReactQueryDevtools } from "react-query/devtools";
+
+import '../styles/global.scss'
+import "../styles/tailwind.css"
+import axios from "axios";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  const queryClient = React.useRef( new QueryClient() );
+
+  return (
+    <QueryClientProvider client={ queryClient.current }>
+      {/*
+        Hydrate and deHydrate for cache everything in react query on the server
+        we grab this dehydrated state as props
+        already prefetched the data on the server
+      */}
+      <Hydrate state={ pageProps.dehydratedState }>
+        <ReactQueryDevtools initialIsOpen={ false } position="bottom-right" />
+        <Component {...pageProps} />
+      </Hydrate>
+    </QueryClientProvider>
+  )
 }
 
 export default MyApp
