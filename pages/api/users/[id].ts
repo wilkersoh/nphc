@@ -17,7 +17,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
         if( !user ) return res.status(400).json({ success: false, messsage: 'Not exist in database'});
 
-        res.json({ success: true, data: user })
+        res.json({ success: true, user })
       } catch (error) {
         res.status(400).json({ success: false, message: 'Something went wrong.' })
       }
@@ -31,7 +31,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
         if( !updateUser ) return res.status(400).json({ success: false, messsage: 'Not exist in database'});
 
-        res.json({ success: true, data: updateUser, message: 'Successful updated the User'  })
+        res.json({ success: true, user: updateUser, message: 'Successful updated the User'  })
 
       } catch (error) {
         res.status(400).json({ success: false, message: 'Something went wrong.' })
@@ -44,7 +44,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
         if( !deleteUser ) return res.status(400).json({ success: false, messsage: 'Something went wrong in delete the user.'});
 
-        res.json({ success: true, data: deleteUser, message: 'Successful deleted the user' })
+        res.json({ success: true, user: deleteUser, message: 'Successful deleted the user' })
       } catch (error) {
         res.status(400).json({ success: false, message: 'Something went wrong.' })
       }
