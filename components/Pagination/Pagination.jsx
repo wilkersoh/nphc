@@ -4,7 +4,7 @@ import "rc-pagination/assets/index.css";
 
 const Pagination = ({ countPerPage, updatePage, currentPage, totalPage }) => {
   return (
-    <div className='mt-8'>
+    <div className='mt-8 pb-10'>
       <RcPagination
         pageSize={ countPerPage }
         onChange={ updatePage }
