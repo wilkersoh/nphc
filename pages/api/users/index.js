@@ -59,6 +59,10 @@ export default async function getAllUsers(req, res) {
       let errors = {}
       try {
         const uniqueUserId = Date.now() + Math.floor(Math.random() * 100);
+
+        const hasUser = await User.findOne({ userId: uniqueUserId }).exec();
+        if( hasUser ) return res.status(400).json({ success: false, message: 'Username already exist in database' })
+
         if( !req.body.hasOwnProperty('name') || !req.body.name.length ) errors['name'] = 'Name is Required'
         if( !req.body.hasOwnProperty('name') || !req.body.salary ) errors['salary'] = 'Salary is Required'
 
