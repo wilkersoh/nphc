@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 import '../styles/global.scss'
 import "../styles/tailwind.css"
-import axios from "axios";
+import "../styles/components/index.scss"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = React.useRef( new QueryClient() );
@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       {/*
         Hydrate and deHydrate for cache everything in react query on the server
         we grab this dehydrated state as props
-        already prefetched the data on the server
+        prefetched the data on the server
       */}
       <Hydrate state={ pageProps.dehydratedState }>
         <ReactQueryDevtools initialIsOpen={ false } position="bottom-right" />
