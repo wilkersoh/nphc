@@ -188,7 +188,7 @@ const Home = () => {
         {/* user list table */}
         <UserTable lists={ userListData?.data?.users || [] } />
 
-        <Pagination countPerPage={ showSelectionText } updatePage={ updatePage } currentPage={ 1 } totalPage={ userListData?.data?.totalPage }/>
+        <Pagination countPerPage={ showSelectionText } updatePage={ updatePage } currentPage={ userListData?.data?.currentPage } totalPage={ userListData?.data?.totalPage }/>
         <Toaster />
       </Layout>
 

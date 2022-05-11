@@ -8,3 +8,7 @@
 
 # Overall App
 1. Database - Mongodb
+2. React Query ( Handle Restful Api )
+3. CRUD and Filter ( Name, Created, Salary,  pageSize )
+4. Filter Between Salary
+5. Responsive -> Mobile to Desktop Version
