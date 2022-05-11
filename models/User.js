@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema(
       required: [ true, 'Please add a salary'],
     }
   },
+  { timestamps: true }
 )
 
 module.exports = mongoose.models.User || mongoose.model('User', UserSchema);
