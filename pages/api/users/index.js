@@ -1,4 +1,3 @@
-// import type { NextApiRequest, NextApiResponse } from 'next';
 import mongoseDbConnect from "utils/databaseConnect";
 import User from "models/User";
 
@@ -13,7 +12,7 @@ export default async function getAllUsers(req, res) {
         const { sortBys, limit, page, startSalary, endSalary } = query;
         let users, filterSalary = {};
 
-        // &sortBys=name&sortBys=desc&page=1&limit=10&startSalary=1000&endSalary=2000
+        // &sortBys=createdAt&sortBys=desc&page=1&limit=10&startSalary=1000&endSalary=2000
         if( startSalary && endSalary ) {
           filterSalary = {
             salary: {
@@ -24,11 +23,22 @@ export default async function getAllUsers(req, res) {
         }
 
         if( !sortBys && !limit && !page ) {
+          console.log("----- first ")
           users = await User.find({})
-        } else {
+        } else if( sortBys ) {
+          let sortByStep1 = sortBys.replace("sortBys=", "");
+          let sortByStep2 = sortByStep1.replace("sortBys=", "");
+          const [ key, value ] = sortByStep2.split("&");
+
           users = await User.find({})
             .where( filterSalary )
-            .sort({ [ sortBys[0] ]: sortBys[1] })
+            .sort({ [ key ]: value })
+            .limit( limit * 1 )
+            .skip(( page - 1 ) * limit )
+            .exec();
+          } else {
+            users = await User.find({})
+            .where( filterSalary )
             .limit( limit * 1 )
             .skip(( page - 1 ) * limit )
             .exec();
@@ -48,20 +58,27 @@ export default async function getAllUsers(req, res) {
       }
       break;
     case 'POST':
+      let errors = {}
       try {
         const uniqueUserId = Date.now() + Math.floor(Math.random() * 100);
-        const hasUser = await User.findOne({ name: req.body.name }).exec();
+        // const hasUser = await User.findOne({ name: req.body.name }).exec();
+        // if( hasUser ) return res.status(400).json({ success: false, message: 'Username already exist in database' })
 
-        if( hasUser ) return res.status(400).json({ success: false, message: 'Username already exist in database' })
-        const user = await User.create({ ...req.body, userId: uniqueUserId, created: new Date().getTime() });
+        if( !req.body.hasOwnProperty('name') || !req.body.name.length ) errors['name'] = 'Name is Required'
+        if( !req.body.hasOwnProperty('name') || !req.body.salary ) errors['salary'] = 'Salary is Required'
+
+        if( Object.keys( errors ).length ) throw new Error();
+
+        const user = await User.create({ ...req.body, userId: uniqueUserId });
 
         res.status( 201 ).json({ success: true, user, message: 'Successful created user.' });
       } catch (error) {
-        res.status(400).json({ success: false, message: `Failed to create user. Try again.` })
+        console.log("hit catch")
+        res.status(400).json({ success: false, message: `Failed to create user. Try again.`, errors })
       }
       break;
     default:
-      res.status(400).json({ success: false, message: 'Something went wrong.' })
+      res.status(400).json({ success: false, message: 'Something went wrong.', })
       break;
   }
 }
