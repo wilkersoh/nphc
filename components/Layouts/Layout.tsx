@@ -3,7 +3,7 @@ import SiderBar from 'components/SiderBar';
 import React from 'react'
 
 interface ILayout {
-  children: React.ReactNode;
+  children?: JSX.Element;
   className?: string;
 }
 

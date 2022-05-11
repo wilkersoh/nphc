@@ -4,7 +4,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 interface IModal {
   show: boolean;
-  title: string;
+  title?: string;
   onClose: () => void;
   handleOnSubmit: () => void;
   className?: string
