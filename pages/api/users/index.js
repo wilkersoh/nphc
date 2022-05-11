@@ -23,7 +23,6 @@ export default async function getAllUsers(req, res) {
         }
 
         if( !sortBys && !limit && !page ) {
-          console.log("----- first ")
           users = await User.find({})
         } else if( sortBys ) {
           let sortByStep1 = sortBys.replace("sortBys=", "");
@@ -44,7 +43,6 @@ export default async function getAllUsers(req, res) {
             .exec();
         }
 
-
         const usersCount = await User.countDocuments();
 
         res.json({
@@ -61,9 +59,6 @@ export default async function getAllUsers(req, res) {
       let errors = {}
       try {
         const uniqueUserId = Date.now() + Math.floor(Math.random() * 100);
-        // const hasUser = await User.findOne({ name: req.body.name }).exec();
-        // if( hasUser ) return res.status(400).json({ success: false, message: 'Username already exist in database' })
-
         if( !req.body.hasOwnProperty('name') || !req.body.name.length ) errors['name'] = 'Name is Required'
         if( !req.body.hasOwnProperty('name') || !req.body.salary ) errors['salary'] = 'Salary is Required'
 
@@ -73,7 +68,6 @@ export default async function getAllUsers(req, res) {
 
         res.status( 201 ).json({ success: true, user, message: 'Successful created user.' });
       } catch (error) {
-        console.log("hit catch")
         res.status(400).json({ success: false, message: `Failed to create user. Try again.`, errors })
       }
       break;

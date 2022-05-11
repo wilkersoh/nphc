@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import Modal from 'components/Modal';
 import Badge from 'components/Badge';
 import { numberWithCommas } from 'utils/numberWithComma';
+import { objectToErrorMessage } from 'utils/objectToErrorMessage';
 
 const removeUser = async ( _id ) => {
   const result = await axiosClient.delete(`/users/${ _id }`);
@@ -43,10 +44,7 @@ const UserTable = ({ lists } ) => {
     },
     onError: ( error ) => {
       const { response: { data, status } } = error;
-      let message = ``;
-      Object.entries( data.errors ).forEach(([ key, value ]) => {
-        message += value + "\n"
-      });
+      const message = objectToErrorMessage( data.errors );
       toast.error(`${ message } (${ status })`);
 
       setFormError( data.errors )
@@ -91,13 +89,14 @@ const UserTable = ({ lists } ) => {
 
   const handleOnSubmit = async ( e ) => {
     e.preventDefault();
-    console.log("view...");
+
     await updateMutateUser( selectedUser );
+    queryClient.invalidateQueries('getUsers');
   }
 
   return (
     <>
-      <div className='table md:mx-2'>
+      <div className='table md:mx-0'>
         <Toaster />
         <div className='text-2xl font-semibold mb-4'>Employees:</div>
         <div>
@@ -122,10 +121,10 @@ const UserTable = ({ lists } ) => {
                     <li className='py-3 px-2 md:p-3 overflow-x-auto'>S${ numberWithCommas( salary ) }</li>
                     <li className='py-3 px-2 md:p-3'>
                       <div className='flex justify-center content-center'>
-                        <div className='px-2' onClick={() => handleOnView( _id ) }>
+                        <div className='px-2 cursor-pointer' onClick={() => handleOnView( _id ) }>
                           <BsPencilFill color="lightBlue" />
                         </div>
-                        <div className='px-2' onClick={() => {
+                        <div className='px-2 cursor-pointer' onClick={() => {
                           setShowPrompt( true )
                           setSelectedUser( item )
                         }}>

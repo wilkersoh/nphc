@@ -1,28 +1,49 @@
 // import type { NextPage } from 'next'
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiAlarmAdd } from "react-icons/bi";
+import { GrFormAdd } from "react-icons/gr";
 import InputFile from "components/Inputs/File"
 import UserTable from 'components/Table';
 import { dehydrate, QueryClient } from "react-query"
-import { useGetUsers, getUsersFromServer } from "hooks/users/useGetUsers"
+import { useGetUsers, getUsersFromServer, DEFAULT_QUERY_OBJECT } from "hooks/users/useGetUsers"
 import { useCreateUser } from "hooks/users/useCreateUser";
 import Layout from "components/Layouts";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import Modal from "components/Modal";
-
+import InputNumber from "components/Inputs/Number"
+import InputText from "components/Inputs/Text"
+import InputSelect from "components/Inputs/Select"
 
 const Home = () => {
-  const { data, isLoading, isFetching } = useGetUsers();
   const [ showCreateModal, setShowCreateModal ] = useState( false );
+  const [ showSelectFilter, setShowSelectFilter ] = useState( false );
   const [ createFormError, setCreateFormError ] = useState( {} );
-  const { mutate: addUser } = useCreateUser( setShowCreateModal, setCreateFormError );
+  const [ disableSearch, setDisableSearch ] = useState( true );
+  const [ fitlerSalary, setFilterSalary ] = useState( {} );
+  const [ searchUserQuery, setSearchUserQuery ] = useState( DEFAULT_QUERY_OBJECT );
+
+  DEFAULT_QUERY_OBJECT
+  const { data } = useGetUsers( searchUserQuery );
+
   const [ formData, setFormData ] = useState( {} );
+  const { mutate: addUser } = useCreateUser( setShowCreateModal, setCreateFormError );
+
+  useEffect(() => {
+    const { endSalary, startSalary } = fitlerSalary
+
+    if( endSalary && startSalary ) return setDisableSearch( false )
+    if( !endSalary && startSalary ) return setDisableSearch( true )
+    if( endSalary && !startSalary ) return setDisableSearch( true )
+
+  }, [ fitlerSalary ])
 
   useEffect(() => {
     return () => {
       setFormData( {} );
       setCreateFormError( {} );
+      setFilterSalary( {} )
+      setDisableSearch( true )
     }
   }, [ showCreateModal ])
 
@@ -43,51 +64,101 @@ const Home = () => {
     setFormData( newUser )
   }
 
-  if( isLoading ) {
-    return (
-      <div>Loadiing</div>
-    )
+  const handleOnChangeFilter = ( e, sortQuery = "" ) => {
+
+    if( !sortQuery.length ) {
+      const { name, value } = e.target;
+      let salaries = { ...fitlerSalary, [ name ]: value }
+
+      return setFilterSalary( salaries );
+    }
+    console.log('sortQuery:  :>> ', sortQuery);
+    setDisableSearch( false )
+    setSearchUserQuery({ ...searchUserQuery, sortBys: sortQuery })
+  }
+
+  const handleOnSubmitFilter =  async ( e ) => {
+    e.preventDefault();
+
+    setSearchUserQuery({ ...searchUserQuery, ...fitlerSalary })
   }
 
   return (
     <>
-      <Layout>
-        <AiOutlineSearch />
-        <InputFile />
-        <div onClick={ () => setShowCreateModal( true )} className="inline-block border-2 border-green-400 p-2 cursor-pointer rounded-full">
-          <BiAlarmAdd color="green"/>
-        </div>
+      <Layout className="mt-12 md:mt-8">
+        {/* Filter container */}
+        <section className="flex flex-col md:mt-10 mb-10">
+          <form onSubmit={ handleOnSubmitFilter } className="flex flex-col justify-center md:justify-start">
+
+            <div className="flex flex-wrap lg:flex-nowrap justify-start md items-center">
+              <div className="mr-4 mb-2 w-full">
+                <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="startSalary">
+                  Minimum Salary
+                </label>
+                <InputNumber
+                  name="startSalary"
+                  value={ fitlerSalary.startSalary }
+                  onChange={ handleOnChangeFilter }
+                  placeholder={'Minimum Salary'}
+                />
+              </div>
+              <div className="mr-4 mb-2 w-full">
+                <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="endSalary">
+                  Maximum Salary
+                </label>
+                <InputNumber
+                  name="endSalary"
+                  value={ fitlerSalary.endSalary }
+                  onChange={ handleOnChangeFilter }
+                  placeholder={'Maximum Salary'}
+                />
+              </div>
+
+              <div className="mr-4 mb-2 w-full" onClick={() => setShowSelectFilter( !showSelectFilter )} >
+                <label className="block text-sm font-bold mb-2 cursor-pointer">Sort By</label>
+                <InputSelect handleOnChangeFilter={ handleOnChangeFilter } show={ showSelectFilter } onClose={() => setShowSelectFilter( false ) } />
+              </div>
+            </div>
+
+            {/* Search Button */}
+            <div className="ml-auto">
+              <button disabled={ disableSearch } type="submit" className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded h-[45px] disabled:bg-gray-500 disabled:opacity-65">Search</button>
+            </div>
+          </form>
+
+          <div onClick={ () => setShowCreateModal( true )} className="inline-block border-2 h-10 w-10 text-center border-green-400 p-2 cursor-pointer rounded-full">
+            <div className="text-2xl text-green mb-2 leading-[0.75]">+</div>
+          </div>
+        </section>
+
+        {/* user list table */}
         <UserTable lists={ data?.data?.users || [] } />
+
         <Toaster />
       </Layout>
-      <Modal show={ showCreateModal } title="View User" onClose={() => setShowCreateModal( false )} handleOnSubmit={ createUser }>
+      <Modal show={ showCreateModal } title="Create User" onClose={() => setShowCreateModal( false )} handleOnSubmit={ createUser }>
         <div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2 cursor-pointer" htmlFor="name">
+            <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="name">
               Name
             </label>
-            <input
-              value={ formData.name || "" }
+            <InputText
+              value={ formData.name }
+              name={"name"}
               onChange={ handleCreateOnChange }
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${ createFormError.name && 'border border-red-500' }`}
-              id="name"
-              name="name"
-              type="text"
-              placeholder='name' />
+              className={ createFormError.name ? true : false }
+            />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2 cursor-pointer" htmlFor="salary">
+            <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="salary">
               Salary
             </label>
-            <input
-              value={ formData.salary || "" }
-              step=".01"
+            <InputNumber
+              value={ formData.salary }
+              name={'salary'}
               onChange={ handleCreateOnChange }
-              className={`form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none ${ createFormError.salary && 'border border-red-500' }`}
-              id="salary"
-              name="salary"
-              type="number"
-              placeholder='Salary' />
+              placeholder={'Salary'}
+              className={ createFormError.salary ? true : false } />
           </div>
         </div>
       </Modal>
