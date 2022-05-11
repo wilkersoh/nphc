@@ -15,21 +15,23 @@ export const useCreateUser = ( setShowCreateModal: any, setCreateFormError: any 
   const queryClient = useQueryClient();
   return useMutation( createUser, {
     onSuccess: ( data: any ) => {
-      queryClient.setQueryData<ICreateUser>('getUsers', ( prev: any ) => {
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            users: [ ...prev.data.users, data.data.user]
-          }
-        }
-      })
+      queryClient.invalidateQueries('getUsers')
+      // queryClient.setQueryData<ICreateUser>('getUsers', ( prev: any ) => {
+      //   console.log('prev', prev)
+      //   console.log('dat.... ', data)
+      //   return {
+      //     ...prev,
+      //     data: {
+      //       ...data.data,
+      //       users: [ ...prev.users, data.data.user ]
+      //     }
+      //   }
+      // })
       setShowCreateModal( false )
     },
     onError: ( error: any ) => {
       const { response: { data } } = error;
       toast.error( data.message )
-      console.log('error: ', error)
       setCreateFormError( data.errors )
     }
   })
