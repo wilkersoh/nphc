@@ -9,8 +9,8 @@ type IUseUpdateUserStatus = {
 
 const updateUser = ( _id: string ) => axiosClient.get(`/users/${ _id }`);
 
-export const useUpdateUser = ( _id: string ) => {
-  return useQuery([ 'updateUser', _id ], () => updateUser( _id ), {
+export const useUpdateUser = ( _id: string, data: any ) => {
+  return useQuery([ 'updateUser', data], () => updateUser( _id ), {
     onError: ( error: IUseUpdateUserStatus ) => toast.error(`${ error.message }`),
     onSuccess: ( payload: IUseUpdateUserStatus ) => toast.success(`${ payload.message }`)
   })

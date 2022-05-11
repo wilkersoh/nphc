@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "react-query";
 import axiosClient from "utils/axios";
 
 interface ICreateUser {
@@ -10,7 +11,7 @@ interface ICreateUser {
 
 const createUser = ( user: ICreateUser ) => axiosClient.post("/users", user);
 
-export const useCreateUser = () => {
+export const useCreateUser = ( setShowCreateModal: any, setCreateFormError: any ) => {
   const queryClient = useQueryClient();
   return useMutation( createUser, {
     onSuccess: ( data: any ) => {
@@ -23,6 +24,13 @@ export const useCreateUser = () => {
           }
         }
       })
+      setShowCreateModal( false )
+    },
+    onError: ( error: any ) => {
+      const { response: { data } } = error;
+      toast.error( data.message )
+      console.log('error: ', error)
+      setCreateFormError( data.errors )
     }
   })
 }
