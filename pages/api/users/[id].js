@@ -1,10 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+// import type { NextApiRequest, NextApiResponse } from 'next';
 import mongoseDbConnect from "utils/databaseConnect";
 import User from "models/User";
 
 mongoseDbConnect();
 
-export default async function getUserById(req: NextApiRequest, res: NextApiResponse) {
+export default async function getUserById(req, res) {
   const {
     query: { id },
     method
@@ -23,7 +23,15 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
       }
       break;
     case 'PUT':
+      let errors = {}
       try {
+        const { name, salary } = req.body;
+
+        if( !name.length ) errors['name'] = 'Name is Required'
+        if( !salary ) errors['salary'] = 'Salary is Required'
+
+        if( Object.keys( errors ).length ) throw new Error();
+
         const updateUser = await User.findByIdAndUpdate( id, req.body, {
           new: true,
           runValidators: true
@@ -34,7 +42,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
         res.json({ success: true, user: updateUser, message: 'Successful updated the User'  })
 
       } catch (error) {
-        res.status(400).json({ success: false, message: 'Something went wrong.' })
+        res.status(400).json({ success: false, message: 'Something went wrong.', errors })
       }
       break;
 
