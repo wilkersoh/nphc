@@ -1,11 +1,6 @@
-// import type { NextPage } from 'next'
-import { AiOutlineSearch } from "react-icons/ai";
-import { BiAlarmAdd } from "react-icons/bi";
-import { GrFormAdd } from "react-icons/gr";
-import InputFile from "components/Inputs/File"
 import UserTable from 'components/Table';
 import { dehydrate, QueryClient } from "react-query"
-import { useGetUsers, getUsersFromServer, DEFAULT_QUERY_OBJECT } from "hooks/users/useGetUsers"
+import { useGetUsers, getUsersFromServer, DEFAULT_QUERY_OBJECT, DEFAULT_PAGE_LIMIT } from "hooks/users/useGetUsers"
 import { useCreateUser } from "hooks/users/useCreateUser";
 import Layout from "components/Layouts";
 import { Toaster } from "react-hot-toast";
@@ -14,17 +9,24 @@ import Modal from "components/Modal";
 import InputNumber from "components/Inputs/Number"
 import InputText from "components/Inputs/Text"
 import InputSelect from "components/Inputs/Select"
+import Pagination from "components/Pagination";
 
 const Home = () => {
   const [ showCreateModal, setShowCreateModal ] = useState( false );
-  const [ showSelectFilter, setShowSelectFilter ] = useState( false );
+
   const [ createFormError, setCreateFormError ] = useState( {} );
   const [ disableSearch, setDisableSearch ] = useState( true );
   const [ fitlerSalary, setFilterSalary ] = useState( {} );
   const [ searchUserQuery, setSearchUserQuery ] = useState( DEFAULT_QUERY_OBJECT );
 
+  const [ showSelectFilter, setShowSelectFilter ] = useState( false );
+  const [ showPageFilter, setShowPageFilter ] = useState( false );
+  const [ sortBysSelectionText, setSortBysSelectionText ] = useState( "Sory By" )
+  const [ showSelectionText, setShowPageText ] = useState( DEFAULT_PAGE_LIMIT )
+
+
   DEFAULT_QUERY_OBJECT
-  const { data } = useGetUsers( searchUserQuery );
+  const { data: userListData } = useGetUsers( searchUserQuery );
 
   const [ formData, setFormData ] = useState( {} );
   const { mutate: addUser } = useCreateUser( setShowCreateModal, setCreateFormError );
@@ -64,17 +66,36 @@ const Home = () => {
     setFormData( newUser )
   }
 
-  const handleOnChangeFilter = ( e, sortQuery = "" ) => {
+  const handleOnChangeFilter = ( e, sortQuery = "", showPageText ) => {
+    let queries = {};
+    if( !sortQuery ) {
+      if( sortQuery && !sortQuery.length ) {
+        // update min and max input
+        const { name, value } = e.target;
+        let salaries = { ...fitlerSalary, [ name ]: value }
 
-    if( !sortQuery.length ) {
-      const { name, value } = e.target;
-      let salaries = { ...fitlerSalary, [ name ]: value }
-
-      return setFilterSalary( salaries );
+        return setFilterSalary( salaries );
+      }
     }
-    console.log('sortQuery:  :>> ', sortQuery);
+
+    // trigger from Select Component
+    if( sortQuery ) {
+      setSortBysSelectionText( e.target.outerText )
+      queries = {
+        ...queries,
+        sortBys: sortQuery
+      }
+    }
+    if( showPageText ) {
+      setShowPageText( e.target.outerText )
+      queries = {
+        ...queries,
+        limit: showPageText
+      }
+    }
+
     setDisableSearch( false )
-    setSearchUserQuery({ ...searchUserQuery, sortBys: sortQuery })
+    setSearchUserQuery({ ...searchUserQuery, ...queries })
   }
 
   const handleOnSubmitFilter =  async ( e ) => {
@@ -82,6 +103,10 @@ const Home = () => {
 
     setSearchUserQuery({ ...searchUserQuery, ...fitlerSalary })
   }
+
+  const updatePage = page => {
+    setSearchUserQuery({ ...searchUserQuery, page: page })
+  };
 
   return (
     <>
@@ -114,10 +139,39 @@ const Home = () => {
                 />
               </div>
 
-              <div className="mr-4 mb-2 w-full" onClick={() => setShowSelectFilter( !showSelectFilter )} >
+              {/* SortBys */}
+              <div className="mr-4 mb-2" onClick={() => setShowSelectFilter( !showSelectFilter )}>
                 <label className="block text-sm font-bold mb-2 cursor-pointer">Sort By</label>
-                <InputSelect handleOnChangeFilter={ handleOnChangeFilter } show={ showSelectFilter } onClose={() => setShowSelectFilter( false ) } />
+                <InputSelect handleOnChangeFilter={ handleOnChangeFilter } displayText={ sortBysSelectionText } show={ showSelectFilter } onClose={() => setShowSelectFilter( false ) }>
+                  <div id="sort-by" className={`origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button ${ showSelectFilter ? 'block' : 'hidden '}`}>
+                      <div className="py-1" role="none">
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=name&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Name, Alphabetically, A-Z</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=name&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Name, Alphabetically, Z-A</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=salary&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Salary, low to high</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=salary&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Salary, high to low</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=createdAt&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Created, old to new</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=createdAt&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Created, new to old</span>
+                      </div>
+                  </div>
+                </InputSelect>
               </div>
+
+              {/* Show Page */}
+              <div className="mb-2" onClick={() => setShowPageFilter( !showPageFilter )}>
+                <label className="block text-sm font-bold mb-2 cursor-pointer">Show</label>
+                <InputSelect handleOnChangeFilter={ handleOnChangeFilter } width="w-[100px]" displayText={ showSelectionText } show={ showPageFilter } onClose={() => setShowPageFilter( false ) }>
+                  <div id="show-page-size" className={`origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button ${ showPageFilter ? 'block' : 'hidden '}`}>
+                    <div className="py-1" role="none">
+                      <span onClick={( e ) => handleOnChangeFilter( e, null, 5 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">5</span>
+                      <span onClick={( e ) => handleOnChangeFilter( e, null, 10 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">10</span>
+                      <span onClick={( e ) => handleOnChangeFilter( e, null, 15 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">15</span>
+                      <span onClick={( e ) => handleOnChangeFilter( e, null, 25 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">25</span>
+                      <span onClick={( e ) => handleOnChangeFilter( e, null, 30 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">30</span>
+                    </div>
+                  </div>
+                </InputSelect>
+              </div>
+
             </div>
 
             {/* Search Button */}
@@ -132,10 +186,12 @@ const Home = () => {
         </section>
 
         {/* user list table */}
-        <UserTable lists={ data?.data?.users || [] } />
+        <UserTable lists={ userListData?.data?.users || [] } />
 
+        <Pagination countPerPage={ showSelectionText } updatePage={ updatePage } currentPage={ 1 } totalPage={ userListData?.data?.totalPage }/>
         <Toaster />
       </Layout>
+
       <Modal show={ showCreateModal } title="Create User" onClose={() => setShowCreateModal( false )} handleOnSubmit={ createUser }>
         <div>
           <div className="mb-4">

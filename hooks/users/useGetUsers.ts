@@ -8,7 +8,7 @@ interface IUseUpdateUserError {
   success: boolean;
   message: string;
 }
-export const DEFAULT_PAGE_LIMIT = 20;
+export const DEFAULT_PAGE_LIMIT = 5;
 export const DEFAULT_PAGE = 1;
 const DEFAULT_QUERY_STRING = `sortBys=createdAt&sortBys=asc&startSalary=&endSalary=&page=${ DEFAULT_PAGE }&limit=${ DEFAULT_PAGE_LIMIT }`
 export const DEFAULT_QUERY_OBJECT = {

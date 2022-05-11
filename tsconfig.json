@@ -16,6 +16,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/index.jsx", "components/Table/Table.jsx", "pages/api/users/index.js", "pages/api/users/[id].js", "utils/numberWithComma.js", "components/SiderBar/SiderBar.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/index.jsx", "components/Table/Table.jsx", "pages/api/users/index.js", "pages/api/users/[id].js", "utils/numberWithComma.js", "components/SiderBar/SiderBar.jsx", "components/Pagination/Paginationt.jsx"],
   "exclude": ["node_modules"]
 }

@@ -1,8 +1,17 @@
 import React from 'react'
+import RcPagination from "rc-pagination";
+import "rc-pagination/assets/index.css";
 
-const Pagination = () => {
+const Pagination = ({ countPerPage, updatePage, currentPage, totalPage }) => {
   return (
-    <div>Pagination</div>
+    <div className='mt-8'>
+      <RcPagination
+        pageSize={ countPerPage }
+        onChange={ updatePage }
+        current={ currentPage }
+        total={ countPerPage * totalPage }
+      />
+    </div>
   )
 }
 
