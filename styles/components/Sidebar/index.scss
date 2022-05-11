@@ -1,0 +1,23 @@
+.sideBarMenu {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  // .sideBarCross {
+  //   pointer-events: unset;
+  //   opacity: 1 !important;
+  // }
+}
+
+.sideBarMenuShadow {
+  box-shadow: 2px 0 3px 0 #555;
+}
+
+.sideBarMenuContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 85vw;
+  transition: width 350px ease-in-out;
+  background-color: #0e141b;
+}

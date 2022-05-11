@@ -10,10 +10,10 @@ interface ILayout {
 const Layout: React.FC<ILayout> = ({ className = "", children }) => {
   return (
     <div className={`flex flex-col mx-auto min-h-screen ${ className }`}>
-      <Header />
-      <section className='flex'>
+      {/* <Header /> */}
+      <section className='flex flex-1 px-4'>
         <SiderBar />
-        <main>
+        <main className='w-full md:mx-8'>
           { children }
         </main>
       </section>
