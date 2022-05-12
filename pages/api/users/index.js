@@ -1,5 +1,6 @@
 import mongoseDbConnect from "utils/databaseConnect";
 import User from "models/User";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 
 mongoseDbConnect();
 
@@ -60,16 +61,19 @@ export default async function getAllUsers(req, res) {
       try {
         const uniqueUserId = Date.now() + Math.floor(Math.random() * 100);
 
-        const hasUser = await User.findOne({ userId: uniqueUserId }).exec();
-        if( hasUser ) return res.status(400).json({ success: false, message: 'Someting went wrong. Please create again.' })
+        const duplicatedUniqueId = await User.findOne({ userId: uniqueUserId }).exec();
+        if( duplicatedUniqueId ) return res.status(400).json({ success: false, message: 'Someting went wrong. Please create again.', errros: "Please try again." })
+
+        const hasUser = await User.findOne({ login: req.body.login }).exec();
+        if( hasUser ) return res.status(400).json({ success: false, message: 'Please try other.', errors: { login: "Value already been used."} })
 
         if( !req.body.hasOwnProperty('name') || !req.body.name.length ) errors['name'] = 'Name is Required'
         if( !req.body.hasOwnProperty('name') || !req.body.salary ) errors['salary'] = 'Salary is Required'
+        if( !req.body.hasOwnProperty('login') || !req.body.login ) errors['login'] = 'Login is Required'
 
         if( Object.keys( errors ).length ) throw new Error();
 
         const user = await User.create({ ...req.body, userId: uniqueUserId });
-
         res.status( 201 ).json({ success: true, user, message: 'Successful created user.' });
       } catch (error) {
         res.status(400).json({ success: false, message: `Failed to create user. Try again.`, errors })

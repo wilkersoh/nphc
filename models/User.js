@@ -8,7 +8,9 @@ const UserSchema = new mongoose.Schema(
       unique: true
     },
     login: {
-      type: Boolean,
+      type: String,
+      required: [ true, 'Please add a login value'],
+      unique: true
     },
     name: {
       type: String,

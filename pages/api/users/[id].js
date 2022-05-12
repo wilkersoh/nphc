@@ -25,10 +25,14 @@ export default async function getUserById(req, res) {
     case 'PUT':
       let errors = {}
       try {
-        const { name, salary } = req.body;
+        const { name, salary, login } = req.body;
+
+        const hasUser = await User.findOne({ login }).exec();
+        if( hasUser ) return res.status(400).json({ success: false, message: 'Please try other.', errors: { login: "Value already been used."} })
 
         if( !name.length ) errors['name'] = 'Name is Required'
         if( !salary ) errors['salary'] = 'Salary is Required'
+        if( !login ) errors['login'] = 'Login is Required'
 
         if( Object.keys( errors ).length ) throw new Error();
 

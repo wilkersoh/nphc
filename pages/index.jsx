@@ -147,6 +147,8 @@ const Home = () => {
                       <div className="py-1" role="none">
                         <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=name&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Name, Alphabetically, A-Z</span>
                         <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=name&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Name, Alphabetically, Z-A</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=login&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Login, Alphabetically, A-Z</span>
+                        <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=login&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Login, Alphabetically, Z-A</span>
                         <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=salary&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Salary, low to high</span>
                         <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=salary&sortBys=desc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Salary, high to low</span>
                         <span onClick={( e ) => handleOnChangeFilter( e, "sortBys=createdAt&sortBys=asc" ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">Created, old to new</span>
@@ -213,6 +215,17 @@ const Home = () => {
               onChange={ handleCreateOnChange }
               placeholder={'Salary'}
               className={ createFormError.salary ? true : false } />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="login">
+              Login
+            </label>
+            <InputText
+              value={ formData.login || "" }
+              name={"login"}
+              onChange={ handleCreateOnChange }
+              className={ createFormError.login ? true : false }
+            />
           </div>
         </div>
       </Modal>

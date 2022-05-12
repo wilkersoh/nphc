@@ -109,7 +109,7 @@ const UserTable = ({ lists } ) => {
               }
             </ul>
           </div>
-          <ul className='table-content flex flex-col'>
+          <ul className='table-content flex flex-col min-h-[240px]'>
             {
               lists.map(( item ) => {
                 const { userId, name, login, salary, _id } = item;
@@ -117,7 +117,7 @@ const UserTable = ({ lists } ) => {
                   <div key={ _id } className="table-grid">
                     <li className='py-3 px-2 md:p-3 overflow-x-auto'>{ userId }</li>
                     <li className='py-3 px-2 md:p-3 overflow-x-auto'>{ name }</li>
-                    <li className='py-3 px-2 md:p-3'><Badge isTrue={ login } /> </li>
+                    <li className='py-3 px-2 md:p-3 overflow-x-auto'>{ login }</li>
                     <li className='py-3 px-2 md:p-3 overflow-x-auto'>S${ numberWithCommas( salary ) }</li>
                     <li className='py-3 px-2 md:p-3'>
                       <div className='flex justify-center content-center'>
@@ -141,7 +141,7 @@ const UserTable = ({ lists } ) => {
       <Prompt show={ showPrompt } onClose={() => setShowPrompt( false )} handleOnYes={ handleOnDelete }>
         Are you sure you want to delete the user?
       </Prompt>
-      <Modal show={ showModal } title="View User" onClose={() => setShowModal( false )} handleOnSubmit={ handleOnSubmit }>
+      <Modal show={ showModal } title="Update User" onClose={() => setShowModal( false )} handleOnSubmit={ handleOnSubmit }>
         <div>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2 cursor-pointer" htmlFor="name">
@@ -170,17 +170,17 @@ const UserTable = ({ lists } ) => {
               type="number"
               placeholder='Salary' />
           </div>
-          <div className="mb-4 flex">
+          <div className="mb-4">
             <label className="block  text-sm font-bold mb-2 mr-2 cursor-pointer" htmlFor="login">
               Login
             </label>
             <input
-              checked={ selectedUser.login }
+              value={ selectedUser.login || "" }
               onChange={ handleOnChangeUser }
-              className={`form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer`}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${ formErrors.name && 'border border-red-500' }`}
               id="login"
               name="login"
-              type="checkbox"
+              type="text"
               placeholder='Login' />
           </div>
         </div>
