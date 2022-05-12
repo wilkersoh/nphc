@@ -165,8 +165,6 @@ const Home = () => {
                       <span onClick={( e ) => handleOnChangeFilter( e, null, 5 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">5</span>
                       <span onClick={( e ) => handleOnChangeFilter( e, null, 10 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">10</span>
                       <span onClick={( e ) => handleOnChangeFilter( e, null, 15 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">15</span>
-                      <span onClick={( e ) => handleOnChangeFilter( e, null, 25 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">25</span>
-                      <span onClick={( e ) => handleOnChangeFilter( e, null, 30 ) } className="text-gray-700 block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100">30</span>
                     </div>
                   </div>
                 </InputSelect>
