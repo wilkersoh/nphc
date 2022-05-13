@@ -68,15 +68,19 @@ const Home = () => {
 
   const handleOnChangeFilter = ( e, sortQuery = "", showPageText ) => {
     let queries = {};
+    const { name, value } = e.target;
+
     if( !sortQuery ) {
-      if( sortQuery && !sortQuery.length ) {
+      // if( sortQuery && !sortQuery.length ) {
         // update min and max input
-        const { name, value } = e.target;
+      console.log(showPageFilter, " showPageFilter :")
         let salaries = { ...fitlerSalary, [ name ]: value }
 
-        return setFilterSalary( salaries );
-      }
+        setFilterSalary( salaries );
+      // }
     }
+
+
 
     // trigger from Select Component
     if( sortQuery ) {

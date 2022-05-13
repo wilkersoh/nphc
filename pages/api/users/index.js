@@ -25,7 +25,7 @@ export default async function getAllUsers(req, res) {
 
         if( !sortBys && !limit && !page ) {
           users = await User.find({})
-        } else if( sortBys ) {
+        } else if( sortBys && filterSalary ) {
           let sortByStep1 = sortBys.replace("sortBys=", "");
           let sortByStep2 = sortByStep1.replace("sortBys=", "");
           const [ key, value ] = sortByStep2.split("&");
@@ -36,6 +36,25 @@ export default async function getAllUsers(req, res) {
             .limit( limit * 1 )
             .skip(( page - 1 ) * limit )
             .exec();
+            const usersCounts = await User.countDocuments();
+            return res.json({
+              success: true,
+              users,
+              totalPage: Math.ceil( users.length / limit ),
+              // totalPage: Math.ceil( usersCounts / limit ),
+              currentPage: page
+            })
+          } else if ( sortBys ) {
+            let sortByStep1 = sortBys.replace("sortBys=", "");
+            let sortByStep2 = sortByStep1.replace("sortBys=", "");
+            const [ key, value ] = sortByStep2.split("&");
+
+            users = await User.find({})
+              .sort({ [ key ]: value })
+              .limit( limit * 1 )
+              .skip(( page - 1 ) * limit )
+              .exec();
+
           } else {
             users = await User.find({})
             .where( filterSalary )
