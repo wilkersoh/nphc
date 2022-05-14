@@ -21,9 +21,8 @@ export default async function getAllUsers(req, res) {
               $lt: +endSalary + 0.000001
             }
           }
+          await User.find({}).where( filterSalary ).count();
         }
-
-        if( filterSalary.salary ) count = await User.find({}).where( filterSalary ).count();
 
         if( !sortBys && !limit && !page ) {
           // testing purpose
