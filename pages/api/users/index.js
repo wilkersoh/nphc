@@ -11,7 +11,7 @@ export default async function getAllUsers(req, res) {
     case 'GET':
       try {
         const { sortBys, limit, page, startSalary, endSalary } = query;
-        let users, filterSalary = {};
+        let users, count, filterSalary = {};
 
         // &sortBys=createdAt&sortBys=desc&page=1&limit=10&startSalary=1000&endSalary=2000
         if( startSalary && endSalary ) {
@@ -23,9 +23,12 @@ export default async function getAllUsers(req, res) {
           }
         }
 
+        if( filterSalary.salary ) count = await User.find({}).where( filterSalary ).count();
+
         if( !sortBys && !limit && !page ) {
+          // testing purpose
           users = await User.find({})
-        } else if( sortBys && filterSalary ) {
+        } else if( filterSalary.salary && sortBys ) {
           let sortByStep1 = sortBys.replace("sortBys=", "");
           let sortByStep2 = sortByStep1.replace("sortBys=", "");
           const [ key, value ] = sortByStep2.split("&");
@@ -36,12 +39,24 @@ export default async function getAllUsers(req, res) {
             .limit( limit * 1 )
             .skip(( page - 1 ) * limit )
             .exec();
-            const usersCounts = await User.countDocuments();
+
             return res.json({
               success: true,
               users,
-              totalPage: Math.ceil( users.length / limit ),
-              // totalPage: Math.ceil( usersCounts / limit ),
+              totalPage: Math.ceil( count / limit ),
+              currentPage: page
+            })
+        } else if( filterSalary.salary ) {
+          users = await User.find({})
+            .where( filterSalary )
+            .limit( limit * 1 )
+            .skip(( page - 1 ) * limit )
+            .exec();
+
+            return res.json({
+              success: true,
+              users,
+              totalPage: Math.ceil( count / limit ),
               currentPage: page
             })
           } else if ( sortBys ) {
@@ -57,7 +72,6 @@ export default async function getAllUsers(req, res) {
 
           } else {
             users = await User.find({})
-            .where( filterSalary )
             .limit( limit * 1 )
             .skip(( page - 1 ) * limit )
             .exec();

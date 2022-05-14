@@ -71,16 +71,11 @@ const Home = () => {
     const { name, value } = e.target;
 
     if( !sortQuery ) {
-      // if( sortQuery && !sortQuery.length ) {
-        // update min and max input
-      console.log(showPageFilter, " showPageFilter :")
-        let salaries = { ...fitlerSalary, [ name ]: value }
+      // update min and max input
+      let salaries = { ...fitlerSalary, [ name ]: value }
 
-        setFilterSalary( salaries );
-      // }
+      setFilterSalary( salaries );
     }
-
-
 
     // trigger from Select Component
     if( sortQuery ) {
@@ -94,6 +89,7 @@ const Home = () => {
       setShowPageText( e.target.outerText )
       queries = {
         ...queries,
+        page: 1,
         limit: showPageText
       }
     }
