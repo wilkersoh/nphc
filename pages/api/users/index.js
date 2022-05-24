@@ -137,6 +137,7 @@ export default async function getAllUsers(req, res) {
 				// })
 
 				// const user = await User.create({ ...req.body, login: hashedPassword, userId: uniqueUserId });
+				const user = await User.create({ ...req.body, userId: uniqueUserId });
 				res
 					.status(201)
 					.json({ success: true, user, message: "Successful created user." });
