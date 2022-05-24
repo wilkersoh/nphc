@@ -6,26 +6,25 @@ import toast, { Toaster } from 'react-hot-toast'
 import axiosClient from 'utils/axios';
 import { useMutation, useQueryClient } from 'react-query';
 import Modal from 'components/Modal';
-import Badge from 'components/Badge';
 import { numberWithCommas } from 'utils/numberWithComma';
 import { objectToErrorMessage } from 'utils/objectToErrorMessage';
+import { IUserList, IUserFormError } from "./Users.type";
 
-const removeUser = async ( _id ) => {
+const removeUser = async ( _id: string ) => {
   const result = await axiosClient.delete(`/users/${ _id }`);
 
   return result;
 }
 
-const updateUser = async ({ _id, ...data }) => {
+const updateUser = async ({ _id, ...data }: { _id: string, data: {} }) => {
   const result = await axiosClient.put(`/users/${ _id }`, data);
   return result;
 }
 
-const UserTable = ({ lists } ) => {
-
+const UserTable = ({ lists }: { lists: IUserList[] } ) => {
   const [ showPrompt, setShowPrompt ] = useState( false );
-  const [ formErrors, setFormError ] = useState( {} );
-  const [ selectedUser, setSelectedUser ] = useState( {} );
+  const [ formErrors, setFormError ] = useState<IUserFormError>( {} );
+  const [ selectedUser, setSelectedUser ] = useState<IUserList | any>({});
   const [ showModal, setShowModal ] = useState( false );
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation( removeUser );
@@ -35,15 +34,14 @@ const UserTable = ({ lists } ) => {
       setFormError( {} );
     }
   }, [])
-
   const { mutateAsync: updateMutateUser } = useMutation( updateUser, {
     onSuccess: () => {
       toast.success('User was updated');
       setShowModal( false )
-      queryClient.invalidateQueries(['getUsers', selectedUser.id ])
+      queryClient.invalidateQueries(['getUsers', selectedUser._id ])
     },
     onError: ( error ) => {
-      const { response: { data, status } } = error;
+      const { response: { data, status } }: any = error;
       const message = objectToErrorMessage( data.errors );
       toast.error(`${ message } (${ status })`);
 
@@ -51,7 +49,7 @@ const UserTable = ({ lists } ) => {
     }
   });
 
-  const handleOnView = async ( id ) => {
+  const handleOnView = async ( id: string ) => {
     try {
       const user = await axiosClient.get(`/users/${ id }`);
       setSelectedUser( user.data.user );
@@ -69,7 +67,7 @@ const UserTable = ({ lists } ) => {
     toast.success('Successfully deleted the user.');
   }
 
-  const handleOnChangeUser = ( e ) => {
+  const handleOnChangeUser = ( e: React.ChangeEvent<HTMLInputElement> ) => {
     const { name, value, checked, type } = e.target;
     let user;
 
@@ -87,7 +85,7 @@ const UserTable = ({ lists } ) => {
     setSelectedUser( user );
   }
 
-  const handleOnSubmit = async ( e ) => {
+  const handleOnSubmit = async ( e: React.SyntheticEvent<HTMLFormElement> ) => {
     e.preventDefault();
 
     await updateMutateUser( selectedUser );
@@ -111,7 +109,7 @@ const UserTable = ({ lists } ) => {
           </div>
           <ul className='table-content flex flex-col min-h-[240px]'>
             {
-              lists.map(( item ) => {
+              lists.map(( item: IUserList ) => {
                 const { userId, name, login, salary, _id } = item;
                 return (
                   <div key={ _id } className="table-grid">
@@ -139,7 +137,7 @@ const UserTable = ({ lists } ) => {
         </div>
       </div>
       <Prompt show={ showPrompt } onClose={() => setShowPrompt( false )} handleOnYes={ handleOnDelete }>
-        Are you sure you want to delete the user?
+        <span>Are you sure you want to delete the user?</span>
       </Prompt>
       <Modal show={ showModal } title="Update User" onClose={() => setShowModal( false )} handleOnSubmit={ handleOnSubmit }>
         <div>
