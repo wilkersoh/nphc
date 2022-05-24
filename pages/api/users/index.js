@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import mongoseDbConnect from "utils/databaseConnect";
 import User from "models/User";
 
@@ -126,7 +127,16 @@ export default async function getAllUsers(req, res) {
 
 				if (Object.keys(errors).length) throw new Error();
 
-				const user = await User.create({ ...req.body, userId: uniqueUserId });
+				// const hashedPassword = await new Promise((resolve, reject) => {
+				// 	bcrypt.genSalt( 10, (err, salt) => {
+				// 		bcrypt.hash( req.body.login, salt, (err, hash) => {
+				// 			if( err ) reject( err );
+				// 			resolve( hash )
+				// 		})
+				// 	})
+				// })
+
+				// const user = await User.create({ ...req.body, login: hashedPassword, userId: uniqueUserId });
 				res
 					.status(201)
 					.json({ success: true, user, message: "Successful created user." });

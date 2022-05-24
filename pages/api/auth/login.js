@@ -1,10 +1,11 @@
-import { sign } from "jsonwebtoken";
+import * as jose from 'jose';
 import { serialize } from "cookie";
 import mongoseDbConnect from "utils/databaseConnect";
 import User from "models/User";
 
 const JWT_SECRET = process.env.JWT_TOKEN;
 const JWT_NAME = process.env.JWT_TOKEN_NAME;
+const JWT_ISSUER = process.env.JWT_TOKEN_ISSUER;
 
 mongoseDbConnect();
 
@@ -17,14 +18,13 @@ export default async function Login(req, res) {
 	if (!user.length)
 		return res.status(401).json({ message: "Invalid Credentials" });
 
-	const token = sign(
-		{
-			exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // 1Week
-			_id: user._id,
-			username: user.name,
-		},
-		JWT_SECRET
-	);
+	const token = await new jose.SignJWT({ userId: user._id })
+	.setProtectedHeader({ alg: 'HS256' })
+	.setIssuedAt()
+	.setIssuer( JWT_ISSUER )
+  .setAudience( user.name )
+	.setExpirationTime('1w')
+	.sign(new TextEncoder().encode( JWT_SECRET ));
 
 	const serialised = serialize(JWT_NAME, token, {
 		httpOnly: true,
