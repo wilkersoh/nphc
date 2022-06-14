@@ -15,9 +15,11 @@ import InputNumber from "components/Inputs/Number";
 import InputText from "components/Inputs/Text";
 import InputSelect from "components/Inputs/Select";
 import Pagination from "components/Pagination";
+import ModalTest from "components/Modal-Test";
 
 const Home = () => {
 	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [showCreateModalTest, setShowCreateModalTest] = useState(false);
 
 	const [createFormError, setCreateFormError] = useState({});
 	const [disableSearch, setDisableSearch] = useState(true);
@@ -119,6 +121,13 @@ const Home = () => {
 			<Layout className="mt-12 md:mt-0">
 				{/* Filter container */}
 				<section className="flex flex-col md:mt-10 mb-10">
+					{/* <ModalTest handleClose={() => setShowCreateModal( false ) } isOpen={ showCreateModal }>
+						This is Modal Content!
+						<button>Test Second</button>
+						<ModalTest handleClose={() => setShowCreateModalTest( false ) } isOpen={ showCreateModalTest }>
+							Second
+						</ModalTest>
+					</ModalTest> */}
 					<form
 						onSubmit={handleOnSubmitFilter}
 						className="flex flex-col justify-center md:justify-start"
@@ -327,7 +336,7 @@ const Home = () => {
 				<Toaster />
 			</Layout>
 
-			<Modal
+			{/* <Modal
 				show={showCreateModal}
 				title="Create User"
 				onClose={() => setShowCreateModal(false)}
@@ -378,7 +387,59 @@ const Home = () => {
 						/>
 					</div>
 				</div>
-			</Modal>
+			</Modal> */}
+			<ModalTest
+				show={showCreateModal}
+				title="Create User"
+				onClose={() => setShowCreateModal(false)}
+				handleOnSubmit={createUser}
+			>
+				<div>
+					<div className="mb-4">
+						<label
+							className="block text-sm font-bold mb-2 cursor-pointer"
+							htmlFor="name"
+						>
+							Name
+						</label>
+						<InputText
+							value={formData.name}
+							name={"name"}
+							onChange={handleCreateOnChange}
+							className={createFormError.name ? true : false}
+						/>
+					</div>
+					<div className="mb-4">
+						<label
+							className="block text-sm font-bold mb-2 cursor-pointer"
+							htmlFor="salary"
+						>
+							Salary
+						</label>
+						<InputNumber
+							value={formData.salary}
+							name={"salary"}
+							onChange={handleCreateOnChange}
+							placeholder={"Salary"}
+							className={createFormError.salary ? true : false}
+						/>
+					</div>
+					<div className="mb-4">
+						<label
+							className="block text-sm font-bold mb-2 cursor-pointer"
+							htmlFor="login"
+						>
+							Login
+						</label>
+						<InputText
+							value={formData.login || ""}
+							name={"login"}
+							onChange={handleCreateOnChange}
+							className={createFormError.login ? true : false}
+						/>
+					</div>
+				</div>
+			</ModalTest>
 		</>
 	);
 };

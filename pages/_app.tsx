@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         prefetched the data on the server
       */}
       <Hydrate state={ pageProps.dehydratedState }>
-        {/* <ReactQueryDevtools initialIsOpen={ false } position="bottom-right" /> */}
+        <ReactQueryDevtools initialIsOpen={ false } position="bottom-right" />
         <Component {...pageProps} />
       </Hydrate>
     </QueryClientProvider>
