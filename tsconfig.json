@@ -21,7 +21,6 @@
 		"**/*.ts",
 		"**/*.tsx",
 		"pages/index.jsx",
-		"components/Table/Table.jsx",
 		"pages/api/users/index.js",
 		"pages/api/users/[id].js",
 		"utils/numberWithComma.js",

@@ -6,7 +6,7 @@ interface IModal {
   show: boolean;
   title?: string;
   onClose: () => void;
-  handleOnSubmit: () => void;
+  handleOnSubmit: ( e: React.SyntheticEvent<HTMLFormElement> ) => void;
   className?: string
   children?: JSX.Element;
 }
