@@ -1,3 +1,17 @@
+# Update MongoDB credentials in .env.local
+1. History - Credentials was removed ( July 22 2022 )
+
+```txt
+
+DB_USER=
+DB_PASSWORD=
+MONGO_URI=
+JWT_TOKEN=0312831sadadas
+JWT_TOKEN_ISSUER=wilker
+JWT_TOKEN_NAME=appToken
+
+```
+
 # How to start for
 
 1. yarn install
