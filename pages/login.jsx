@@ -16,10 +16,8 @@ const Login = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		try {
 			const user = await axios.post("/api/auth/login", credentials);
-
 			if (!user) throw new Error("Please try again.");
 
 			// successful login
@@ -34,7 +32,11 @@ const Login = () => {
 		<Layout>
 			<Toaster />
 			<div className="flex mt-40 justify-center">
-				<form onSubmit={handleSubmit} className="w-48 md:w-[400px]">
+				<form
+					data-testid="form"
+					onSubmit={handleSubmit}
+					className="w-48 md:w-[400px]"
+				>
 					<div className="flex flex-col">
 						<label htmlFor="username">Username</label>
 						<input
@@ -42,6 +44,7 @@ const Login = () => {
 							type="text"
 							value={credentials.username || ""}
 							name="username"
+							placeholder="Username"
 							id="username"
 							className="text-black pl-2"
 						/>
@@ -53,6 +56,7 @@ const Login = () => {
 							type="password"
 							value={credentials.password || ""}
 							name="password"
+							placeholder="Password"
 							id="password"
 							className="text-black pl-2"
 						/>

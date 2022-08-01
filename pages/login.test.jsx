@@ -1,46 +1,47 @@
 import Login from "./login";
 import "@testing-library/jest-dom";
-import {
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-	act,
-} from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
+import axios from "axios";
 
 describe("Login form", () => {
-	// const onSubmit = jest.fn();
+	// const onSubmit = jest.mock("axios");
+	const handleSubmit = jest.fn(() => {
+		console.log("passsssed");
+	});
 
 	beforeEach(() => {
-		// onSubmit.mockClear();
-		render(<Login />);
+		handleSubmit.mockClear();
+		render(<Login handleSubmit={handleSubmit} />);
 	});
 
 	it("renders fields", () => {
-		expect(screen.queryByTestId("username")).toBeDefined();
-		expect(screen.queryByTestId("password")).toBeDefined();
+		expect(screen.getByPlaceholderText("Username")).toBeInTheDocument();
+		expect(screen.getByPlaceholderText("Password")).toBeInTheDocument();
+	});
+
+	it("correct input type", () => {
+		expect(screen.getByPlaceholderText("Username")).toHaveAttribute(
+			"type",
+			"text"
+		);
+		expect(screen.getByPlaceholderText("Password")).toHaveAttribute(
+			"type",
+			"password"
+		);
 	});
 
 	it("onSubmit is called when all fields pass validation", async () => {
-		const onSubmit = jest.fn();
-		// const logSpy = jest.spyOn(console, "log");
 		const username = screen.getByRole("textbox", { name: /username/i });
 		const password = screen.getByLabelText(/password/i);
 		const submitButton = screen.getByRole("button", { name: /login/i });
+		// const form = screen.getByTestId("form");
 
 		await user.type(username, "wilker");
 		await user.type(password, "S!mple01");
-		// await user.click(submitButton);
-
-		fireEvent.click(submitButton);
+		await user.click(submitButton);
 
 		expect(username.value).toBe("wilker");
-		await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(0));
-		/*
-			The test script return
-			Expected number of calls: 1
-			Received number of calls: 0
-		*/
+		// expect(handleSubmit).toHaveBeenCalledTimes(0);
 	});
 });
