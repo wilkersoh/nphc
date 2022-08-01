@@ -1,9 +1,9 @@
-import Prompt from "./Prompt";
+import Modal from "./Modal";
 import "@testing-library/jest-dom";
 import { cleanup, render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-describe("Prompt portal", () => {
+describe("Modal portal", () => {
 	const root = document.createElement("div");
 	root.setAttribute("id", "modal-root");
 
@@ -13,15 +13,14 @@ describe("Prompt portal", () => {
 
 	afterEach(cleanup);
 
-	it("Prompt show and close button", async () => {
+	it("modal show and close button", async () => {
 		const onClose = jest.fn();
 
 		render(
-			<Prompt show={true} onClose={onClose}>
+			<Modal show={true} onClose={onClose}>
 				<div>test</div>
-			</Prompt>
+			</Modal>
 		);
-		// expect(container.find(".promptBackground")).toHaveLength(1);
 
 		const closeIcon = screen.getByTestId("onClose");
 
@@ -30,15 +29,5 @@ describe("Prompt portal", () => {
 		await user.click(closeIcon);
 
 		expect(onClose).toHaveBeenCalledTimes(1);
-	});
-
-	it("when `show` is false return null", () => {
-		const { container } = render(
-			<Prompt show={false}>
-				<div>test</div>
-			</Prompt>
-		);
-
-		expect(container).toBeEmptyDOMElement();
 	});
 });
