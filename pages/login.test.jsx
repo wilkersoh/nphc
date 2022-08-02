@@ -5,7 +5,7 @@ import user from "@testing-library/user-event";
 import axios from "axios";
 
 describe("Login form", () => {
-	// const onSubmit = jest.mock("axios");
+	const axios = jest.mock("axios");
 	const handleSubmit = jest.fn(() => {
 		console.log("passsssed");
 	});
@@ -32,16 +32,19 @@ describe("Login form", () => {
 	});
 
 	it("onSubmit is called when all fields pass validation", async () => {
+		const mockResp = { id: 1, username: "wilker" };
 		const username = screen.getByRole("textbox", { name: /username/i });
 		const password = screen.getByLabelText(/password/i);
 		const submitButton = screen.getByRole("button", { name: /login/i });
-		// const form = screen.getByTestId("form");
+
+		// axios.post = jest.fn(() => mockResp);
 
 		await user.type(username, "wilker");
 		await user.type(password, "S!mple01");
 		await user.click(submitButton);
 
 		expect(username.value).toBe("wilker");
-		// expect(handleSubmit).toHaveBeenCalledTimes(0);
+		// expect(axios.post).toHaveBeenCalledTimes(1);
+		expect(handleSubmit).toHaveBeenCalledTimes(0);
 	});
 });
