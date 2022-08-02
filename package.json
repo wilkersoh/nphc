@@ -9,6 +9,9 @@
 		"lint": "next lint",
 		"test": "jest --watch"
 	},
+	"msw": {
+		"workerDirectory": "public"
+	},
 	"dependencies": {
 		"axios": "^0.27.2",
 		"bcrypt": "^5.0.1",
