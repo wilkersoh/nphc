@@ -33,12 +33,8 @@ describe("Prompt portal", () => {
 	});
 
 	it("when `show` is false return null", () => {
-		const { container } = render(
-			<Prompt show={false}>
-				<div>test</div>
-			</Prompt>
-		);
+		render(<Prompt show={false} />);
 
-		expect(container).toBeEmptyDOMElement();
+		expect(root.firstElementChild).toBeNull();
 	});
 });

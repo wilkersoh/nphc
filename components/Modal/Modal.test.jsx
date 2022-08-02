@@ -30,4 +30,10 @@ describe("Modal portal", () => {
 
 		expect(onClose).toHaveBeenCalledTimes(1);
 	});
+
+	it("when `show` is false return null", () => {
+		render(<Modal show={false} />);
+
+		expect(root.firstElementChild).toBeNull();
+	});
 });
