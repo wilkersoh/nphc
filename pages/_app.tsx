@@ -7,11 +7,11 @@ import "../styles/global.scss";
 import "../styles/tailwind.css";
 import "../styles/components/index.scss";
 
-if (process.env.NEXT_PUBLIC_API_MOCKING === "true") {
-	import("../mocks").then((res) => {
-		res.setupMocks();
-	});
-}
+// if (process.env.NEXT_PUBLIC_API_MOCKING === "true") {
+// 	import("../mocks").then((res) => {
+// 		res.setupMocks();
+// 	});
+// }
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const queryClient = React.useRef(new QueryClient());

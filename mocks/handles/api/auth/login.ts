@@ -7,8 +7,6 @@ type LoginCredentials = {
 
 export const loginHandlers = [
 	rest.post<LoginCredentials>("/api/auth/login", (req, res, ctx) => {
-		console.log(req.body);
-
-		return res(ctx.status(200));
+		return res(ctx.json({ message: "success login", status: 200 }));
 	}),
 ];
